@@ -16,23 +16,21 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "memory.h"
-#include "m6502.h"
+#include "M6502.h"
 
-m6502::m6502()
+M6502::M6502()
 {
    statusRegister = 0x24;
    IRQ = 0;
    NMI = 0;
 }
-
-static unsigned short m6502::memReadAbsolute(unsigned short adr)
+/*
+static unsigned short Memory::memReadAbsolute(unsigned short adr)
 {
     //return (memRead(adr) | memRead((unsigned short)(adr + 1)) << 8);
 }
 
-/*
-static void m6502::synchronize(void)
+static void M6502::synchronize(void)
 {
     int realTimeMillis = SDL_GetTicks() - lastTime;
     int sleepMillis = _synchroMillis - realTimeMillis;
@@ -46,7 +44,7 @@ static void m6502::synchronize(void)
 }
 */
 
-static void m6502::pushProgramCounter(void)
+void M6502::pushProgramCounter(void)
 {
     //memWrite((unsigned short)(stackPointer + 0x100), (unsigned char)(programCounter >> 8));
     //stackPointer--;
@@ -55,7 +53,7 @@ static void m6502::pushProgramCounter(void)
     //cycles += 2;
 }
 
-static void m6502::popProgramCounter(void)
+void M6502::popProgramCounter(void)
 {
     //stackPointer++;
     //programCounter = memRead((unsigned short)(stackPointer + 0x100));
@@ -64,7 +62,7 @@ static void m6502::popProgramCounter(void)
     //cycles += 2;
 }
 
-static void m6502::handleIRQ(void)
+void M6502::handleIRQ(void)
 {
     pushProgramCounter();
   //  memWrite((unsigned short)(0x100 + stackPointer), (unsigned char)(statusRegister & ~0x10));
@@ -74,56 +72,56 @@ static void m6502::handleIRQ(void)
    // cycles += 8;
 }
 
-static void m6502::handleNMI(void)
+void M6502::handleNMI(void)
 {
     pushProgramCounter();
-    memWrite((unsigned short)(0x100 + stackPointer), (unsigned char)(statusRegister & ~0x10));
+    //memWrite((unsigned short)(0x100 + stackPointer), (unsigned char)(statusRegister & ~0x10));
     stackPointer--;
     statusRegister |= I;
     NMI = 0;
-    programCounter = memReadAbsolute(0xFFFA);
+    //programCounter = memReadAbsolute(0xFFFA);
     cycles += 8;
 }
 
-static void m6502::Imp(void)
+void M6502::Imp(void)
 {
     cycles++;
 }
 
-static void m6502::Imm(void)
+void M6502::Imm(void)
 {
     op = programCounter++;
 }
 
-static void m6502::Zero(void)
+void M6502::Zero(void)
 {
-    op = memRead(programCounter++);
+    //op = memRead(programCounter++);
     cycles++;
 }
 
-static void m6502::ZeroX(void)
+void M6502::ZeroX(void)
 {
-    op = memRead(programCounter++) + xRegister & 0xFF;
+ //   op = memRead(programCounter++) + xRegister & 0xFF;
     cycles++;
 }
 
-static void m6502::ZeroY(void)
+void M6502::ZeroY(void)
 {
-    op = memRead(programCounter++) + yRegister & 0xFF;
+ //   op = memRead(programCounter++) + yRegister & 0xFF;
     cycles++;
 }
 
-static void m6502::Abs(void)
+void M6502::Abs(void)
 {
-    op = memReadAbsolute(programCounter);
+  //  op = memReadAbsolute(programCounter);
     programCounter += 2;
     cycles += 2;
 }
 
-static void m6502::AbsX(void)
+void M6502::AbsX(void)
 {
-    opL = memRead(programCounter++) + xRegister;
-    opH = memRead(programCounter++) << 8;
+    //opL = memRead(programCounter++) + xRegister;
+   // opH = memRead(programCounter++) << 8;
     cycles += 2;
 
     if (opL & 0x100)
@@ -132,10 +130,10 @@ static void m6502::AbsX(void)
     op = opH + opL;
 }
 
-static void m6502::AbsY(void)
+void M6502::AbsY(void)
 {
-    opL = memRead(programCounter++) + yRegister;
-    opH = memRead(programCounter++) << 8;
+ //   opL = memRead(programCounter++) + yRegister;
+  //  opH = memRead(programCounter++) << 8;
     cycles += 2;
 
     if (opL & 0x100)
@@ -144,29 +142,29 @@ static void m6502::AbsY(void)
     op = opH + opL;
 }
 
-static void m6502::Ind(void)
+void M6502::Ind(void)
 {
-    ptrL = memRead(programCounter++);
-    ptrH = memRead(programCounter++) << 8;
-    op = memRead((unsigned short)(ptrH + ptrL));
+    //ptrL = memRead(programCounter++);
+  //  ptrH = memRead(programCounter++) << 8;
+   // op = memRead((unsigned short)(ptrH + ptrL));
     ptrL = ptrL + 1 & 0xFF;
-    op += memRead((unsigned short)(ptrH + ptrL)) << 8;
+   // op += memRead((unsigned short)(ptrH + ptrL)) << 8;
     cycles += 4;
 }
 
-static void m6502::IndZeroX(void)
+void M6502::IndZeroX(void)
 {
-    ptr = memRead(programCounter++) + xRegister & 0xFF;
-    op = memRead(ptr);
-    op += memRead((unsigned short)(ptr + 1 & 0xFF)) << 8;
+   // ptr = memRead(programCounter++) + xRegister & 0xFF;
+    //op = memRead(ptr);
+   // op += memRead((unsigned short)(ptr + 1 & 0xFF)) << 8;
     cycles += 3;
 }
 
-static void m6502::IndZeroY(void)
+void M6502::IndZeroY(void)
 {
-    ptr = memRead(programCounter++);
-    opL = memRead(ptr) + yRegister;
-    opH = memRead((unsigned short)(ptr + 1 & 0xFF)) << 8;
+   // ptr = memRead(programCounter++);
+ //   opL = memRead(ptr) + yRegister;
+   // opH = memRead((unsigned short)(ptr + 1 & 0xFF)) << 8;
     cycles += 3;
 
     if (opL & 0x100)
@@ -175,9 +173,9 @@ static void m6502::IndZeroY(void)
     op = opH + opL;
 }
 
-static void m6502::Rel(void)
+void M6502::Rel(void)
 {
-    op = memRead(programCounter++);
+    //op = memRead(programCounter++);
 
     if (op & 0x80)
         op |= 0xFF00;
@@ -186,32 +184,32 @@ static void m6502::Rel(void)
     cycles++;
 }
 
-static void m6502::WAbsX(void)
+void M6502::WAbsX(void)
 {
-    opL = memRead(programCounter++) + xRegister;
-    opH = memRead(programCounter++) << 8;
+   // opL = memRead(programCounter++) + xRegister;
+   // opH = memRead(programCounter++) << 8;
     cycles += 3;
     op = opH + opL;
 }
 
-static void m6502::WAbsY(void)
+void M6502::WAbsY(void)
 {
-    opL = memRead(programCounter++) + yRegister;
-    opH = memRead(programCounter++) << 8;
+   // opL = memRead(programCounter++) + yRegister;
+  //  opH = memRead(programCounter++) << 8;
     cycles += 3;
     op = opH + opL;
 }
 
-static void m6502::WIndZeroY(void)
+void M6502::WIndZeroY(void)
 {
-    ptr = memRead(programCounter++);
-    opL = memRead(ptr) + yRegister;
-    opH = memRead((unsigned short)(ptr + 1 & 0xFF)) << 8;
+   // ptr = memRead(programCounter++);
+  //  opL = memRead(ptr) + yRegister;
+   // opH = memRead((unsigned short)(ptr + 1 & 0xFF)) << 8;
     cycles += 4;
     op = opH + opL;
 }
 
-static void m6502::setStatusRegisterNZ(unsigned char val)
+void M6502::setStatusRegisterNZ(unsigned char val)
 {
     if (val & 0x80)
         statusRegister |= N;
@@ -224,46 +222,46 @@ static void m6502::setStatusRegisterNZ(unsigned char val)
         statusRegister &= ~Z;
 }
 
-static void m6502::LDA(void)
+void M6502::LDA(void)
 {
-    accumulator = memRead(op);
+    //accumulator = memRead(op);
     setStatusRegisterNZ(accumulator);
     cycles++;
 }
 
-static void m6502::LDX(void)
+void M6502::LDX(void)
 {
-    xRegister = memRead(op);
+   // xRegister = memRead(op);
     setStatusRegisterNZ(xRegister);
     cycles++;
 }
 
-static void m6502::LDY(void)
+void M6502::LDY(void)
 {
-    yRegister = memRead(op);
+   // yRegister = memRead(op);
     setStatusRegisterNZ(yRegister);
     cycles++;
 }
 
-static void m6502::STA(void)
+void M6502::STA(void)
 {
-    memWrite(op, accumulator);
+  //  memWrite(op, accumulator);
     cycles++;
 }
 
-static void m6502::STX(void)
+void M6502::STX(void)
 {
-    memWrite(op, xRegister);
+   // memWrite(op, xRegister);
     cycles++;
 }
 
-static void m6502::STY(void)
+void M6502::STY(void)
 {
-    memWrite(op, yRegister);
+   // memWrite(op, yRegister);
     cycles++;
 }
 
-static void m6502::setFlagCarry(unsigned short val)
+void M6502::setFlagCarry(unsigned short val)
 {
     if (val & 0x100)
         statusRegister |= C;
@@ -271,31 +269,31 @@ static void m6502::setFlagCarry(unsigned short val)
         statusRegister &= ~C;
 }
 
-static void m6502::ADC(void)
+void M6502::ADC(void)
 {
-    unsigned short Op1 = accumulator, Op2 = memRead(op);
+    //unsigned short Op1 = accumulator, Op2 = memRead(op);
     cycles++;
 
     if (statusRegister & D)
     {
-        if (!(Op1 + Op2 + (statusRegister & C ? 1 : 0) & 0xFF))
-            statusRegister |= Z;
-        else
-            statusRegister &= ~Z;
+     //   if (!(Op1 + Op2 + (statusRegister & C ? 1 : 0) & 0xFF))
+      //      statusRegister |= Z;
+      //  else
+      //      statusRegister &= ~Z;
 
-        tmp = (Op1 & 0x0F) + (Op2 & 0x0F) + (statusRegister & C ? 1 : 0);
+    //    tmp = (Op1 & 0x0F) + (Op2 & 0x0F) + (statusRegister & C ? 1 : 0);
         accumulator = tmp < 0x0A ? tmp : tmp + 6;
-        tmp = (Op1 & 0xF0) + (Op2 & 0xF0) + (tmp & 0xF0);
+     //   tmp = (Op1 & 0xF0) + (Op2 & 0xF0) + (tmp & 0xF0);
 
         if (tmp & 0x80)
             statusRegister |= N;
         else
             statusRegister &= ~N;
 
-        if ((Op1 ^ tmp) & ~(Op1 ^ Op2) & 0x80)
-            statusRegister |= V;
-        else
-            statusRegister &= ~V;
+    //    if ((Op1 ^ tmp) & ~(Op1 ^ Op2) & 0x80)
+      //      statusRegister |= V;
+     //   else
+     //       statusRegister &= ~V;
 
         tmp = (accumulator & 0x0F) | (tmp < 0xA0 ? tmp : tmp + 0x60);
 
@@ -308,20 +306,20 @@ static void m6502::ADC(void)
     }
     else
     {
-        tmp = Op1 + Op2 + (statusRegister & C ? 1 : 0);
+        //tmp = Op1 + Op2 + (statusRegister & C ? 1 : 0);
         accumulator = tmp & 0xFF;
 
-        if ((Op1 ^ accumulator) & ~(Op1 ^ Op2) & 0x80)
-            statusRegister |= V;
-        else
-            statusRegister &= ~V;
+     //   if ((Op1 ^ accumulator) & ~(Op1 ^ Op2) & 0x80)
+     //       statusRegister |= V;
+     //   else
+     //       statusRegister &= ~V;
 
         setFlagCarry(tmp);
         setStatusRegisterNZ(accumulator);
     }
 }
 
-static void m6502::setFlagBorrow(unsigned short val)
+void M6502::setFlagBorrow(unsigned short val)
 {
     if (!(val & 0x100))
         statusRegister |= C;
@@ -329,29 +327,29 @@ static void m6502::setFlagBorrow(unsigned short val)
         statusRegister &= ~C;
 }
 
-static void m6502::SBC(void)
+void M6502::SBC(void)
 {
-    unsigned short Op1 = accumulator, Op2 = memRead(op);
+    //unsigned short Op1 = accumulator, Op2 = memRead(op);
     cycles++;
 
     if (statusRegister & D)
     {
-        tmp = (Op1 & 0x0F) - (Op2 & 0x0F) - (statusRegister & C ? 0 : 1);
+        //tmp = (Op1 & 0x0F) - (Op2 & 0x0F) - (statusRegister & C ? 0 : 1);
         accumulator = !(tmp & 0x10) ? tmp : tmp - 6;
-        tmp = (Op1 & 0xF0) - (Op2 & 0xF0) - (accumulator & 0x10);
+        //tmp = (Op1 & 0xF0) - (Op2 & 0xF0) - (accumulator & 0x10);
         accumulator = (accumulator & 0x0F) | (!(tmp & 0x100) ? tmp : tmp - 0x60);
-        tmp = Op1 - Op2 - (statusRegister & C ? 0 : 1);
+        //tmp = Op1 - Op2 - (statusRegister & C ? 0 : 1);
         setFlagBorrow(tmp);
         setStatusRegisterNZ((unsigned char)tmp);
     }
     else
     {
-        tmp = Op1 - Op2 - (statusRegister & C ? 0 : 1);
+        //tmp = Op1 - Op2 - (statusRegister & C ? 0 : 1);
         accumulator = tmp & 0xFF;
 
-        if ((Op1 ^ Op2) & (Op1 ^ accumulator) & 0x80)
+        //if ((Op1 ^ Op2) & (Op1 ^ accumulator) & 0x80)
             statusRegister |= V;
-        else
+        //else
             statusRegister &= ~V;
 
         setFlagBorrow(tmp);
@@ -359,54 +357,54 @@ static void m6502::SBC(void)
     }
 }
 
-static void m6502::CMP(void)
+void M6502::CMP(void)
 {
-    tmp = accumulator - memRead(op);
+    //tmp = accumulator - memRead(op);
     cycles++;
     setFlagBorrow(tmp);
     setStatusRegisterNZ((unsigned char)tmp);
 }
 
-static void m6502::CPX(void)
+void M6502::CPX(void)
 {
-    tmp = xRegister - memRead(op);
+    //tmp = xRegister - memRead(op);
     cycles++;
     setFlagBorrow(tmp);
     setStatusRegisterNZ((unsigned char)tmp);
 }
 
-static void m6502::CPY(void)
+void M6502::CPY(void)
 {
-    tmp = yRegister - memRead(op);
+    //tmp = yRegister - memRead(op);
     cycles++;
     setFlagBorrow(tmp);
     setStatusRegisterNZ((unsigned char)tmp);
 }
 
-static void m6502::AND(void)
+void M6502::AND(void)
 {
-    accumulator &= memRead(op);
+    //accumulator &= memRead(op);
     cycles++;
     setStatusRegisterNZ(accumulator);
 }
 
-static void m6502::ORA(void)
+void M6502::ORA(void)
 {
-    accumulator |= memRead(op);
+    //accumulator |= memRead(op);
     cycles++;
     setStatusRegisterNZ(accumulator);
 }
 
-static void m6502::EOR(void)
+void M6502::EOR(void)
 {
-    accumulator ^= memRead(op);
+    //accumulator ^= memRead(op);
     cycles++;
     setStatusRegisterNZ(accumulator);
 }
 
-static void m6502::ASL(void)
+void M6502::ASL(void)
 {
-    btmp = memRead(op);
+    //btmp = memRead(op);
 
     if (btmp & 0x80)
         statusRegister |= C;
@@ -415,11 +413,11 @@ static void m6502::ASL(void)
 
     btmp <<= 1;
     setStatusRegisterNZ(btmp);
-    memWrite(op, btmp);
+    //memWrite(op, btmp);
     cycles += 3;
 }
 
-static void m6502::ASL_A(void)
+void M6502::ASL_A(void)
 {
     tmp = accumulator << 1;
     accumulator = tmp & 0xFF;
@@ -427,9 +425,9 @@ static void m6502::ASL_A(void)
     setStatusRegisterNZ(accumulator);
 }
 
-static void m6502::LSR(void)
+void M6502::LSR(void)
 {
-    btmp = memRead(op);
+    //btmp = memRead(op);
 
     if (btmp & 1)
         statusRegister |= C;
@@ -438,11 +436,11 @@ static void m6502::LSR(void)
 
     btmp >>= 1;
     setStatusRegisterNZ(btmp);
-    memWrite(op, btmp);
+    //memWrite(op, btmp);
     cycles += 3;
 }
 
-static void m6502::LSR_A(void)
+void M6502::LSR_A(void)
 {
     if (accumulator & 1)
         statusRegister |= C;
@@ -453,11 +451,11 @@ static void m6502::LSR_A(void)
     setStatusRegisterNZ(accumulator);
 }
 
-static void m6502::ROL(void)
+void M6502::ROL(void)
 {
     int newCarry;
 
-    btmp = memRead(op);
+    //btmp = memRead(op);
     newCarry = btmp & 0x80;
     btmp = (btmp << 1) | (statusRegister & C ? 1 : 0);
 
@@ -467,11 +465,11 @@ static void m6502::ROL(void)
         statusRegister &= ~C;
 
     setStatusRegisterNZ(btmp);
-    memWrite(op, btmp);
+    //memWrite(op, btmp);
     cycles += 3;
 }
 
-static void m6502::ROL_A(void)
+void M6502::ROL_A(void)
 {
     tmp = (accumulator << 1) | (statusRegister & C ? 1 : 0);
     accumulator = tmp & 0xFF;
@@ -479,11 +477,11 @@ static void m6502::ROL_A(void)
     setStatusRegisterNZ(accumulator);
 }
 
-static void m6502::ROR(void)
+void M6502::ROR(void)
 {
     int newCarry;
 
-    btmp = memRead(op);
+    //btmp = memRead(op);
     newCarry = btmp & 1;
     btmp = (btmp >> 1) | (statusRegister & C ? 0x80 : 0);
 
@@ -493,11 +491,11 @@ static void m6502::ROR(void)
         statusRegister &= ~C;
 
     setStatusRegisterNZ(btmp);
-    memWrite(op, btmp);
+    //memWrite(op, btmp);
     cycles += 3;
 }
 
-static void m6502::ROR_A(void)
+void M6502::ROR_A(void)
 {
     tmp = accumulator | (statusRegister & C ? 0x100 : 0);
 
@@ -510,51 +508,51 @@ static void m6502::ROR_A(void)
     setStatusRegisterNZ(accumulator);
 }
 
-static void m6502::INC(void)
+void M6502::INC(void)
 {
-    btmp = memRead(op);
+    //btmp = memRead(op);
     btmp++;
     setStatusRegisterNZ(btmp);
-    memWrite(op, btmp);
+    //memWrite(op, btmp);
     cycles += 2;
 }
 
-static void m6502::DEC(void)
+void M6502::DEC(void)
 {
-    btmp = memRead(op);
+    //btmp = memRead(op);
     btmp--;
     setStatusRegisterNZ(btmp);
-    memWrite(op, btmp);
+    //memWrite(op, btmp);
     cycles += 2;
 }
 
-static void m6502::INX(void)
+void M6502::INX(void)
 {
     xRegister++;
     setStatusRegisterNZ(xRegister);
 }
 
-static void m6502::INY(void)
+void M6502::INY(void)
 {
     yRegister++;
     setStatusRegisterNZ(yRegister);
 }
 
-static void m6502::DEX(void)
+void M6502::DEX(void)
 {
     xRegister--;
     setStatusRegisterNZ(xRegister);
 }
 
-static void m6502::DEY(void)
+void M6502::DEY(void)
 {
     yRegister--;
     setStatusRegisterNZ(yRegister);
 }
 
-static void m6502::BIT(void)
+void M6502::BIT(void)
 {
-    btmp = memRead(op);
+    //btmp = memRead(op);
 
     if (btmp & 0x40)
         statusRegister |= V;
@@ -574,72 +572,72 @@ static void m6502::BIT(void)
     cycles++;
 }
 
-static void m6502::PHA(void)
+void M6502::PHA(void)
 {
-    memWrite((unsigned short)(0x100 + stackPointer), accumulator);
+   // memWrite((unsigned short)(0x100 + stackPointer), accumulator);
     stackPointer--;
     cycles++;
 }
 
-static void m6502::PHP(void)
+void M6502::PHP(void)
 {
-    memWrite((unsigned short)(0x100 + stackPointer), statusRegister);
+    //memWrite((unsigned short)(0x100 + stackPointer), statusRegister);
     stackPointer--;
     cycles++;
 }
 
-static void m6502::PLA(void)
+void M6502::PLA(void)
 {
     stackPointer++;
-    accumulator = memRead((unsigned short)(stackPointer + 0x100));
+    //accumulator = memRead((unsigned short)(stackPointer + 0x100));
     setStatusRegisterNZ(accumulator);
     cycles += 2;
 }
 
-static void m6502::PLP(void)
+void M6502::PLP(void)
 {
     stackPointer++;
-    statusRegister = memRead((unsigned short)(stackPointer + 0x100));
+    //statusRegister = memRead((unsigned short)(stackPointer + 0x100));
     cycles += 2;
 }
 
-static void m6502::BRK(void)
+void M6502::BRK(void)
 {
     pushProgramCounter();
     PHP();
     statusRegister |= B;
-    programCounter = memReadAbsolute(0xFFFE);
+    //programCounter = memReadAbsolute(0xFFFE);
     cycles += 3;
 }
 
-static void m6502::RTI(void)
+void M6502::RTI(void)
 {
     PLP();
     popProgramCounter();
     cycles++;
 }
 
-static void m6502::JMP(void)
+void M6502::JMP(void)
 {
     programCounter = op;
 }
 
-static void m6502::RTS(void)
+void M6502::RTS(void)
 {
     popProgramCounter();
     programCounter++;
     cycles += 2;
 }
 
-static void m6502::JSR(void)
+void M6502::JSR(void)
 {
-    opL = memRead(programCounter++);
+    //opL = memRead(programCounter++);
     pushProgramCounter();
-    programCounter = opL + (memRead(programCounter) << 8);
+    //programCounter = opL + (memRead(programCounter) << 8);
     cycles += 3;
 }
 
-static void m6502::branch(void)
+void M6502::branch(void)
 {
     cycles++;
 
@@ -649,155 +647,156 @@ static void m6502::branch(void)
     programCounter = op;
 }
 
-static void m6502::BNE(void)
+void M6502::BNE(void)
 {
     if (!(statusRegister & Z))
         branch();
 }
 
-static void m6502::BEQ(void)
+void M6502::BEQ(void)
 {
     if (statusRegister & Z)
         branch();
 }
 
-static void m6502::BVC(void)
+void M6502::BVC(void)
 {
     if (!(statusRegister & V))
         branch();
 }
 
-static void m6502::BVS(void)
+void M6502::BVS(void)
 {
     if (statusRegister & V)
         branch();
 }
 
-static void m6502::BCC(void)
+void M6502::BCC(void)
 {
     if (!(statusRegister & C))
         branch();
 }
 
-static void m6502::BCS(void)
+void M6502::BCS(void)
 {
     if (statusRegister & C)
         branch();
 }
 
-static void m6502::BPL(void)
+void M6502::BPL(void)
 {
     if (!(statusRegister & N))
         branch();
 }
 
-static void m6502::BMI(void)
+void M6502::BMI(void)
 {
     if (statusRegister & N)
         branch();
 }
 
-static void Tm6502::AX(void)
+void M6502::TAX(void)
 {
     xRegister = accumulator;
     setStatusRegisterNZ(accumulator);
 }
 
-static void m6502::TXA(void)
+void M6502::TXA(void)
 {
     accumulator = xRegister;
     setStatusRegisterNZ(accumulator);
 }
 
-static void m6502::TAY(void)
+void M6502::TAY(void)
 {
     yRegister = accumulator;
     setStatusRegisterNZ(accumulator);
 }
 
-static void m6502::TYA(void)
+void M6502::TYA(void)
 {
     accumulator = yRegister;
     setStatusRegisterNZ(accumulator);
 }
 
-static void m6502::TXS(void)
+void M6502::TXS(void)
 {
     stackPointer = xRegister;
 }
 
-static void m6502::TSX(void)
+void M6502::TSX(void)
 {
     xRegister = stackPointer;
     setStatusRegisterNZ(xRegister);
 }
 
-static void m6502::CLC(void)
+void M6502::CLC(void)
 {
     statusRegister &= ~C;
 }
 
-static void m6502::SEC(void)
+void M6502::SEC(void)
 {
     statusRegister |= C;
 }
 
-static void m6502::CLI(void)
+void M6502::CLI(void)
 {
     statusRegister &= ~I;
 }
 
-static void m6502::SEI(void)
+void M6502::SEI(void)
 {
     statusRegister |= I;
 }
 
-static void m6502::CLV(void)
+void M6502::CLV(void)
 {
     statusRegister &= ~V;
 }
 
-static void m6502::CLD(void)
+void M6502::CLD(void)
 {
     statusRegister &= ~D;
 }
 
-static void m6502::SED(void)
+void M6502::SED(void)
 {
     statusRegister |= D;
 }
 
-static void m6502::NOP(void)
+void M6502::NOP(void)
 {
 }
 
-static void m6502::Unoff(void)
+void M6502::Unoff(void)
 {
 }
 
-static void m6502::Unoff1(void)
+void M6502::Unoff1(void)
 {
 }
 
-static void m6502::Unoff2(void)
+void M6502::Unoff2(void)
 {
     programCounter++;
 }
 
-static void m6502::Unoff3(void)
+void M6502::Unoff3(void)
 {
     programCounter += 2;
 }
 
-static void m6502::Hang(void)
+void M6502::Hang(void)
 {
     programCounter--;
 }
 
-static void m6502::executeOpcode(void)
+void M6502::executeOpcode(void)
 {
-    unsigned char opcode = memRead(programCounter++);
+    //unsigned char opcode = memRead(programCounter++);
 
+unsigned char opcode = 0x00; // REMOVE PLEASE
     switch (opcode)
     {
     case 0x00:
@@ -1725,7 +1724,7 @@ static void m6502::executeOpcode(void)
 }
 
 /*
-static int m6502::runM6502(void *data)
+static int M6502::runM6502(void *data)
 {
     while (running)
     {
@@ -1747,46 +1746,53 @@ static int m6502::runM6502(void *data)
     return 0;
 }
 
-void m6502::startM6502(void)
+void M6502::startM6502(void)
 {
     running = 1;
     lastTime = SDL_GetTicks();
     thread = SDL_CreateThread(runM6502, NULL);
 }
 
-void m6502::stopM6502(void)
+void M6502::stopM6502(void)
 {
     running = 0;
     SDL_WaitThread(thread, NULL);
 }
 
 */
-void m6502::resetM6502(void)
+void M6502::hardReset(void)
 {
     statusRegister |= I;
     stackPointer = 0xFF;
-    programCounter = memReadAbsolute(0xFFFC);
+    //programCounter = memReadAbsolute(0xFFFC);
+}
+void M6502::softReset(void)
+{
+    statusRegister |= I;
+    stackPointer = 0xFF;
+    //programCounter = memReadAbsolute(0xFFFC);
 }
 
-void m6502::setSpeed(int freq, int synchroMillis)
+void M6502::setSpeed(int freq, int synchroMillis)
 {
     cyclesBeforeSynchro = synchroMillis * freq;
     _synchroMillis = synchroMillis;
 }
 
-void m6502::setIRQ(int state)
+void M6502::setIRQ(int state)
 {
     IRQ = state;
 }
 
-void m6502::setNMI(void)
+void M6502::setNMI(void)
 {
     NMI = 1;
 }
 
-/*
-int *dumpState(void)
+
+int saveState(void)
 {
+    /*
     int *state = (int *)malloc(sizeof(int) * 6);
 
     state[0] = programCounter;
@@ -1797,10 +1803,11 @@ int *dumpState(void)
     state[5] = stackPointer;
 
     return state;
+    */
 }
 
-*/
-void m6502::loadState(int *state)
+
+void M6502::loadState(int *state)
 {
     programCounter = state[0];
     statusRegister = state[1];

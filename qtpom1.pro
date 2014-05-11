@@ -5,14 +5,14 @@ SOURCES += \
     main.cpp \
     MainWindow.cpp \
     Screen.cpp \
-    m6502.cpp \
-    memory.cpp
+    M6502.cpp \
+    Memory.cpp
 
 HEADERS += \
     MainWindow.h \
     Screen.h \
-    m6502.h \
-    memory.h
+    M6502.h \
+    Memory.h
 
 TARGET = qtpom1
 

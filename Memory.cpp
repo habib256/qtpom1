@@ -16,40 +16,43 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-#include "memory.h"
-#include "configuration.h"
-#include "pia6820.h"
+#include "Memory.h"
+//#include "configuration.h"
+//#include "pia6820.h"
 
-memory::memory()
+Memory::Memory()
 {
+    //ram8k = 0;
+   // writeInRom = 1;
 }
 
-static int memory::loadMonitor(void)
+int Memory::loadMonitor(void)
 {
-    const char *romdir = getRomDirectory();
-    char *filename;
-    FILE *fp;
+    //const char *romdir = getRomDirectory();
+   // char *filename;
+   // FILE *fp;
 
-    filename = (char *)malloc(strlen(romdir) + 13);
-    sprintf(filename, "%s/monitor.rom", romdir);
+    //filename = (char *)malloc(strlen(romdir) + 13);
+    //sprintf(filename, "%s/monitor.rom", romdir);
 
-    fp = fopen(filename, "rb");
+   // fp = fopen(filename, "rb");
 
-    free(filename);
+   // free(filename);
 
-    if (fp)
-    {
-        fread(&mem[0xFF00], 1, 256, fp);
-        fclose(fp);
-    }
-    else
-        return 0;
+   // if (fp)
+  //  {
+   //     fread(&mem[0xFF00], 1, 256, fp);
+   //     fclose(fp);
+   // }
+   // else
+   //     return 0;
 
     return 1;
 }
 
-static int memory::loadBasic(void)
+int Memory::loadBasic(void)
 {
+    /*
     const char *romdir = getRomDirectory();
     char *filename;
     FILE *fp;
@@ -70,87 +73,88 @@ static int memory::loadBasic(void)
         return 0;
 
     return 1;
+    */
 }
 
 
-void memory::resetMemory(void)
+void Memory::resetMemory(void)
 {
-    memset(mem, 0, 57344);
+    //memset(mem, 0, 57344);
 
     if (!loadMonitor())
     {
-        fprintf(stderr, "stderr: Could not load monitor\n");
-        exit(1);
+        //fprintf(stderr, "stderr: Could not load monitor\n");
+        //exit(1);
     }
 
     if (!loadBasic())
     {
-        fprintf(stderr, "stderr: Could not load basic\n");
-        exit(1);
+        //fprintf(stderr, "stderr: Could not load basic\n");
+       // exit(1);
     }
 }
 
-void memory::setRam8k(int b)
+void Memory::setRam8k(int b)
 {
-    ram8k = b;
+    //ram8k = b;
 }
 
-int memory::getRam8k()
+int Memory::getRam8k()
 {
-    return ram8k;
+    //return ram8k;
 }
 
-void memory::setWriteInRom(int b)
+void Memory::setWriteInRom(int b)
 {
-    writeInRom = b;
+   // writeInRom = b;
 }
 
-int memory::getWriteInRom(void)
+int Memory::getWriteInRom(void)
 {
-    return writeInRom;
+    //return writeInRom;
 }
 
-unsigned charmemory:: memRead(unsigned short address)
+unsigned char Memory:: memRead(unsigned short address)
 {
     if (address == 0xD013)
-        return readDspCr();
+        //return readDspCr();
     if (address == 0xD012)
-        return readDsp();
+      //  return readDsp();
     if (address == 0xD011)
-        return readKbdCr();
+      //  return readKbdCr();
     if (address == 0xD010)
-        return readKbd();
+      //  return readKbd();
 
     return mem[address];
 }
 
-void memory::memWrite(unsigned short address, unsigned char value)
+void Memory::memWrite(unsigned short address, unsigned char value)
 {
     if (address == 0xD013)
     {
-        writeDspCr(value);
+        //writeDspCr(value);
         return;
     }
     if (address == 0xD012)
     {
-        writeDsp((unsigned char)(value | 0x80));
+       // writeDsp((unsigned char)(value | 0x80));
         return;
     }
     if (address == 0xD011)
     {
-        writeKbdCr(value);
+        //writeKbdCr(value);
         return;
     }
     if (address == 0xD010)
     {
-        writeKbd(value);
+        //writeKbd(value);
         return;
     }
 
-    if (address >= 0xFF00 && !writeInRom)
-        return;
-    if (ram8k && address >= 0x2000 && address < 0xFF00)
-        return;
+    //if (address >= 0xFF00 && !writeInRom)
+   //     return;
+   // if (ram8k && address >= 0x2000 && address < 0xFF00)
+     //   return;
 
     mem[address] = value;
 }
@@ -161,7 +165,7 @@ unsigned char *dumpMemory(unsigned short start, unsigned short end)
     unsigned char *fbrut = (unsigned char *)malloc(end - start + 1);
 
     if (!fbrut)
-        fprintf(stderr, "stderr: Could not allocate memory block\n");
+        fprintf(stderr, "stderr: Could not allocate Memory block\n");
     else
         memcpy(fbrut, &mem[start], end - start + 1);
 
@@ -169,7 +173,7 @@ unsigned char *dumpMemory(unsigned short start, unsigned short end)
 }
 */
 
-void memory::setMemory(const unsigned char *data, unsigned short start, unsigned int size)
+void Memory::setMemory(const unsigned char *data, unsigned short start, unsigned int size)
 {
-    memcpy(&mem[start], data, size);
+  //  memcpy(&mem[start], data, size);
 }

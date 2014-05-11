@@ -19,14 +19,18 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
-class memory
+class Memory
 {
 public:
 
-    static unsigned char mem[65536];
-    static int ram8k = 0, writeInRom = 1;
 
-    memory();
+
+
+    Memory();
+
+
+    int loadMonitor(void);
+    int loadBasic(void);
     void resetMemory(void);
     void setRam8k(int b);
     int getRam8k(void);
@@ -37,6 +41,16 @@ public:
     unsigned char *dumpMemory(unsigned short start, unsigned short end);
     void setMemory(const unsigned char *data, unsigned short start, unsigned int size);
 
+private :
+
+    unsigned char mem[65536];
+    //int ram8k;
+    //int writeInRom;
+
+    unsigned short memReadAbsolute(unsigned short adr);
+
+
 };
 
 #endif // MEMORY_H
+
