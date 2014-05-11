@@ -19,8 +19,10 @@
 #include <QApplication>
 #include <QWidget>
 #include <QLabel>
+#include <QDockWidget>
 
 #include "MainWindow.h"
+#include "DebugDockWidget.h"
 
 
 MainWindow::MainWindow()
@@ -33,6 +35,12 @@ MainWindow::MainWindow()
     createStatusBar();
 
     createPom1();
+
+    debugDockWidget = new DebugDockWidget(this);
+
+    debugDockWidget->setAllowedAreas(Qt::LeftDockWidgetArea |
+                                    Qt::RightDockWidgetArea);
+     addDockWidget(Qt::RightDockWidgetArea, debugDockWidget);
 
     setCentralWidget(screen);
     setWindowIcon(QIcon(":/images/pom1.png"));
@@ -48,7 +56,6 @@ void MainWindow::createPom1()
     memory = new Memory();
     cpu = new M6502();
     screen = new Screen();
-
 }
 
 void MainWindow::destroyPom1()

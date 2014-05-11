@@ -7,6 +7,7 @@
 #include "Memory.h"
 #include "M6502.h"
 #include "Screen.h"
+#include "DebugDockWidget.h"
 
 class MainWindow : public QMainWindow
 {
@@ -23,6 +24,7 @@ private:
     M6502 *cpu;
     Memory *memory;
     Screen *screen;
+    DebugDockWidget *debugDockWidget;
 
     // Pom1 functions
     void createPom1(void);

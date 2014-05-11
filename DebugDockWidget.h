@@ -1,13 +1,21 @@
-#ifndef DEBUGMEMORY_H
-#define DEBUGMEMORY_H
+#ifndef DEBUGDOCWIDGET_H
+#define DEBUGDOCWIDGET_H
 
 #include <QWidget>
+#include <QDockWidget>
+#include <QTableWidget>
 
-class DebugMemory : public QWidget
+class DebugDockWidget : public QDockWidget
 {
     Q_OBJECT
 public:
-    explicit DebugMemory(QWidget *parent = 0);
+    explicit DebugDockWidget(QWidget *parent = 0);
+
+private:
+
+     QTableWidget *table;
+
+    void paintEvent(QPaintEvent *event);
 
 signals:
 
@@ -15,4 +23,4 @@ public slots:
 
 };
 
-#endif // DEBUGMEMORY_H
+#endif // DEBUGDOCWIDGET_H
