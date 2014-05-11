@@ -31,4 +31,6 @@ OTHER_FILES += \
     images/screen.png \
     images/fleche.png \
     images/aboutQt.png \
-    images/quit.png
+    images/quit.png \
+    README.md \
+    LICENSE
