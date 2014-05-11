@@ -1,6 +1,6 @@
 // Pom1 Apple 1 Emulator
-// Copyright (C) 2000 Verhille Arnaud
 // Copyright (C) 2012 John D. Corrado
+// Copyright (C) 2000-2014 Verhille Arnaud
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -19,36 +19,38 @@
 #ifndef MEMORY_H
 #define MEMORY_H
 
+#include <vector>
+using namespace std;
+
 class Memory
 {
 public:
 
-
-
-
     Memory();
 
-
-    int loadMonitor(void);
-    int loadBasic(void);
+    // Memory Options
+    void initMemory(void);
     void resetMemory(void);
-    void setRam8k(int b);
-    int getRam8k(void);
-    void setWriteInRom(int b);
-    int getWriteInRom(void);
+    void setWriteInRom(bool b);
+    bool getWriteInRom(void);
+
+    // Load Memory from file
+    int loadWozMonitor(void);
+    int loadBasic(void);
+
     unsigned char memRead(unsigned short address);
     void memWrite(unsigned short address, unsigned char value);
     unsigned char *dumpMemory(unsigned short start, unsigned short end);
-    void setMemory(const unsigned char *data, unsigned short start, unsigned int size);
 
 private :
 
-    unsigned char mem[65536];
-    //int ram8k;
-    //int writeInRom;
+    // Memory itself tab
+    vector <unsigned char> mem;
 
     unsigned short memReadAbsolute(unsigned short adr);
 
+    int ramSize; // in kilobytes
+    bool writeInRom;
 
 };
 

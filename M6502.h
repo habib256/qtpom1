@@ -1,6 +1,6 @@
 // Pom1 Apple 1 Emulator
-// Copyright (C) 2000 Verhille Arnaud
 // Copyright (C) 2012 John D. Corrado
+// Copyright (C) 2000-2014 Verhille Arnaud
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -47,7 +47,7 @@ public:
 
 private :
 
-    //static int runM6502(void *data);
+    //int runM6502(void *data);
     unsigned char accumulator, xRegister, yRegister, statusRegister, stackPointer;
     int IRQ, NMI;
     unsigned short programCounter;
@@ -55,7 +55,6 @@ private :
     unsigned short op, opH, opL, ptr, ptrH, ptrL, tmp;
     long lastTime;
     int cycles, cyclesBeforeSynchro, _synchroMillis;
-    //static SDL_Thread *thread;
     int running;
 
 

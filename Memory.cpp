@@ -1,6 +1,6 @@
 // Pom1 Apple 1 Emulator
-// Copyright (C) 2000 Verhille Arnaud
 // Copyright (C) 2012 John D. Corrado
+// Copyright (C) 2000-2014 Verhille Arnaud
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -22,141 +22,61 @@
 
 Memory::Memory()
 {
-    //ram8k = 0;
-   // writeInRom = 1;
+   initMemory();
+   // TEST
+   mem[5]=0xFF;
 }
 
-int Memory::loadMonitor(void)
+void Memory::initMemory(){
+    ramSize = 32;  // Ouaahh 32Kbytes !
+    for (int i=0; i < ramSize*1024; i++)
+    {
+    mem.push_back(0);
+    }
+    loadWozMonitor();
+    loadBasic();
+    setWriteInRom(0);
+}
+
+void Memory::resetMemory(void)
 {
-    //const char *romdir = getRomDirectory();
-   // char *filename;
-   // FILE *fp;
+    for (int i=0; i < ramSize*1024; i++)
+    {
+    mem[i]=0;
+    }
+}
 
-    //filename = (char *)malloc(strlen(romdir) + 13);
-    //sprintf(filename, "%s/monitor.rom", romdir);
+void Memory::setWriteInRom(bool b)
+{
+   writeInRom = b;
+}
 
-   // fp = fopen(filename, "rb");
+bool Memory::getWriteInRom(void)
+{
+    return writeInRom;
+}
 
-   // free(filename);
 
-   // if (fp)
-  //  {
-   //     fread(&mem[0xFF00], 1, 256, fp);
-   //     fclose(fp);
-   // }
-   // else
-   //     return 0;
-
-    return 1;
+int Memory::loadWozMonitor(void)
+{
+    return 0;
 }
 
 int Memory::loadBasic(void)
 {
-    /*
-    const char *romdir = getRomDirectory();
-    char *filename;
-    FILE *fp;
-
-    filename = (char *)malloc(strlen(romdir) + 11);
-    sprintf(filename, "%s/basic.rom", romdir);
-
-    fp = fopen(filename, "rb");
-
-    free(filename);
-
-    if (fp)
-    {
-        fread(&mem[0xE000], 1, 4096, fp);
-        fclose(fp);
-    }
-    else
-        return 0;
-
-    return 1;
-    */
+    return 0;
 }
 
-
-void Memory::resetMemory(void)
+unsigned char Memory::memRead(unsigned short address)
 {
-    //memset(mem, 0, 57344);
-
-    if (!loadMonitor())
-    {
-        //fprintf(stderr, "stderr: Could not load monitor\n");
-        //exit(1);
-    }
-
-    if (!loadBasic())
-    {
-        //fprintf(stderr, "stderr: Could not load basic\n");
-       // exit(1);
-    }
-}
-
-void Memory::setRam8k(int b)
-{
-    //ram8k = b;
-}
-
-int Memory::getRam8k()
-{
-    //return ram8k;
-}
-
-void Memory::setWriteInRom(int b)
-{
-   // writeInRom = b;
-}
-
-int Memory::getWriteInRom(void)
-{
-    //return writeInRom;
-}
-
-unsigned char Memory:: memRead(unsigned short address)
-{
-    if (address == 0xD013)
-        //return readDspCr();
-    if (address == 0xD012)
-      //  return readDsp();
-    if (address == 0xD011)
-      //  return readKbdCr();
-    if (address == 0xD010)
-      //  return readKbd();
-
-    return mem[address];
+ return mem[address];
 }
 
 void Memory::memWrite(unsigned short address, unsigned char value)
 {
-    if (address == 0xD013)
-    {
-        //writeDspCr(value);
-        return;
-    }
-    if (address == 0xD012)
-    {
-       // writeDsp((unsigned char)(value | 0x80));
-        return;
-    }
-    if (address == 0xD011)
-    {
-        //writeKbdCr(value);
-        return;
-    }
-    if (address == 0xD010)
-    {
-        //writeKbd(value);
-        return;
-    }
-
-    //if (address >= 0xFF00 && !writeInRom)
-   //     return;
-   // if (ram8k && address >= 0x2000 && address < 0xFF00)
-     //   return;
-
-    mem[address] = value;
+    if (address >= 0xFF00 && !writeInRom)
+       return;
+  mem[address] = value;
 }
 
 /*
@@ -173,7 +93,3 @@ unsigned char *dumpMemory(unsigned short start, unsigned short end)
 }
 */
 
-void Memory::setMemory(const unsigned char *data, unsigned short start, unsigned int size)
-{
-  //  memcpy(&mem[start], data, size);
-}

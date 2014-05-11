@@ -1790,7 +1790,7 @@ void M6502::setNMI(void)
 }
 
 
-int saveState(void)
+int M6502::saveState(void)
 {
     /*
     int *state = (int *)malloc(sizeof(int) * 6);

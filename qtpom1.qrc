@@ -12,5 +12,6 @@
         <file>images/screen.png</file>
         <file>images/aboutQt.png</file>
         <file>images/quit.png</file>
+        <file>images/debug.png</file>
     </qresource>
 </RCC>
