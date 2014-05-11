@@ -1,15 +1,14 @@
-#ifndef DEBUGDOCWIDGET_H
-#define DEBUGDOCWIDGET_H
+#ifndef DEBUGWIDGET_H
+#define DEBUGWIDGET_H
 
 #include <QWidget>
-#include <QDockWidget>
 #include <QTableWidget>
 
-class DebugDockWidget : public QDockWidget
+class DebugWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit DebugDockWidget(QWidget *parent = 0);
+    explicit DebugWidget(QWidget *parent = 0);
 
 private:
 

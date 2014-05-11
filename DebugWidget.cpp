@@ -1,21 +1,29 @@
 #include <QPainter>
 #include <QLayout>
+#include <QPushButton>
+#include <QTableWidget>
 
-#include "DebugDockWidget.h"
+#include "DebugWidget.h"
 
-DebugDockWidget::DebugDockWidget(QWidget *parent) :
-    QDockWidget(parent)
+DebugWidget::DebugWidget(QWidget *parent) :
+    QWidget(parent)
 {
-    setFixedWidth(200);
+    QVBoxLayout *layout = new QVBoxLayout;
 
-    table = new QTableWidget(10,2,this);
-    table->setFixedSize(150,300);
-    QHBoxLayout *layout = new QHBoxLayout;
+    QTableWidget *table = new QTableWidget(200,2,this);
+    table->setColumnWidth(0, 50);
+    table->setColumnWidth(1, 50);
     layout->addWidget(table);
-    this->setLayout(layout);
+
+    QPushButton *bouton1 = new QPushButton("Bonjour");
+    layout->addWidget(bouton1);
+
+    setLayout(layout);
+
+
 }
 
-void DebugDockWidget::paintEvent(QPaintEvent *event)
+void DebugWidget::paintEvent(QPaintEvent *event)
 {
 
 }

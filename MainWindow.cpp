@@ -22,7 +22,7 @@
 #include <QDockWidget>
 
 #include "MainWindow.h"
-#include "DebugDockWidget.h"
+#include "DebugWidget.h"
 
 
 MainWindow::MainWindow()
@@ -36,11 +36,16 @@ MainWindow::MainWindow()
 
     createPom1();
 
-    debugDockWidget = new DebugDockWidget(this);
 
-    debugDockWidget->setAllowedAreas(Qt::LeftDockWidgetArea |
-                                    Qt::RightDockWidgetArea);
-     addDockWidget(Qt::RightDockWidgetArea, debugDockWidget);
+
+    QDockWidget *dock = new QDockWidget(tr("6502 Debug"), this);
+        dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+
+    debugWidget = new DebugWidget(dock);
+    dock->setWidget(debugWidget);
+        addDockWidget(Qt::RightDockWidgetArea, dock);
+        cpuMenu->addAction(dock->toggleViewAction());
+
 
     setCentralWidget(screen);
     setWindowIcon(QIcon(":/images/pom1.png"));

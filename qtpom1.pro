@@ -7,14 +7,14 @@ SOURCES += \
     Screen.cpp \
     M6502.cpp \
     Memory.cpp \
-    DebugDockWidget.cpp
+    DebugWidget.cpp
 
 HEADERS += \
     MainWindow.h \
     Screen.h \
     M6502.h \
     Memory.h \
-    DebugDockWidget.h
+    DebugWidget.h
 
 TARGET = qtpom1
 
