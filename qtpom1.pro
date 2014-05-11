@@ -1,0 +1,34 @@
+    QT += core gui xml
+    greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+SOURCES += \
+    main.cpp \
+    MainWindow.cpp \
+    Screen.cpp \
+    m6502.cpp \
+    memory.cpp
+
+HEADERS += \
+    MainWindow.h \
+    Screen.h \
+    m6502.h \
+    memory.h
+
+TARGET = qtpom1
+
+RESOURCES += \
+    qtpom1.qrc
+
+OTHER_FILES += \
+    images/pom1.png \
+    images/about.png \
+    images/hardreset.png \
+    images/loadMemory.png \
+    images/memory.png \
+    images/pasteCode.png \
+    images/reset.png \
+    images/saveMemory.png \
+    images/screen.png \
+    images/fleche.png \
+    images/aboutQt.png \
+    images/quit.png
