@@ -33,6 +33,7 @@ class M6502
 {
 public:
     M6502();
+    M6502(Memory* mem);
 
     void start(void);
     void stop(void);
@@ -43,9 +44,12 @@ public:
     void setNMI(void);
     int saveState(void);
     void loadState(int *state);
+    unsigned short memReadAbsolute(unsigned short adr);
 
 
 private :
+
+    Memory *memory;
 
     //int runM6502(void *data);
     unsigned char accumulator, xRegister, yRegister, statusRegister, stackPointer;

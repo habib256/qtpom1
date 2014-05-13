@@ -39,6 +39,7 @@ public:
     int loadBasic(void);
 
     unsigned int memRead(unsigned int address);
+    //unsigned short memReadAbsolute(unsigned short adr);
     void memWrite(unsigned short address, unsigned char value);
     unsigned char *dumpMemory(unsigned short start, unsigned short end);
 
@@ -47,7 +48,7 @@ private :
     // Memory itself tab
     vector <unsigned int> mem;
 
-    unsigned short memReadAbsolute(unsigned short adr);
+
 
     int ramSize; // in kilobytes
     bool writeInRom;
