@@ -23,16 +23,20 @@ RESOURCES += \
 
 OTHER_FILES += \
     images/pom1.png \
-    images/about.png \
-    images/hardreset.png \
-    images/loadMemory.png \
-    images/memory.png \
-    images/pasteCode.png \
     images/reset.png \
     images/saveMemory.png \
     images/screen.png \
     images/fleche.png \
-    images/aboutQt.png \
     images/quit.png \
     README.md \
-    LICENSE
+    LICENSE \
+    images/about.png \
+    images/aboutQt.png \
+    images/debug.png \
+    images/hardreset.png \
+    images/loadMemory.png \
+    images/memory.png \
+    images/pasteCode.png \
+    roms/basic.rom \
+    roms/charmap.rom \
+    roms/WozMonitor.rom

@@ -35,8 +35,10 @@ public:
     bool getWriteInRom(void);
 
     // Load Memory from file
+        int loadBasic(void);
+        int loadKrusader(void);
     int loadWozMonitor(void);
-    int loadBasic(void);
+
 
     unsigned int memRead(unsigned int address);
     //unsigned short memReadAbsolute(unsigned short adr);

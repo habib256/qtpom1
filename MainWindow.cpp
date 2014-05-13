@@ -16,6 +16,9 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
+
+#include <iostream>
+
 #include <QApplication>
 #include <QWidget>
 #include <QLabel>
@@ -49,6 +52,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::createPom1()
 {
+    cout << "Welcome to qtPom1 - Apple I Emulator" << endl;
     memory = new Memory();
     cpu = new M6502(memory);
     screen = new Screen();
