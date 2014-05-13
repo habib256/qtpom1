@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>images/about.png</file>
-        <file>images/fleche.png</file>
         <file>images/hardreset.png</file>
         <file>images/loadMemory.png</file>
         <file>images/memory.png</file>
@@ -13,5 +12,8 @@
         <file>images/aboutQt.png</file>
         <file>images/quit.png</file>
         <file>images/debug.png</file>
+        <file>roms/basic.rom</file>
+        <file>roms/charmap.rom</file>
+        <file>roms/monitor.rom</file>
     </qresource>
 </RCC>

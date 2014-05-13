@@ -31,7 +31,7 @@ M6502::M6502(Memory * mem)
    statusRegister = 0x24;
    IRQ = 0;
    NMI = 0;
-   *memory = *mem;
+   memory = mem;
 }
 
 unsigned short M6502::memReadAbsolute(unsigned short adr)

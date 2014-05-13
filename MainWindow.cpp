@@ -28,7 +28,7 @@
 
 MainWindow::MainWindow()
 {
-    setFixedSize(800, 480);
+    setFixedSize(800, 600);
 
     createActions();
     createMenus();
@@ -38,19 +38,6 @@ MainWindow::MainWindow()
 
     createPom1();
 
-
-
-    QDockWidget *dock = new QDockWidget(tr("Memory Viewer"), this);
-    dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
-
-    memoryViewer = new MemoryViewer(dock);
-    dock->setWidget(memoryViewer);
-    addDockWidget(Qt::RightDockWidgetArea, dock);
-    cpuMenu->addAction(dock->toggleViewAction());
-
-    for (int i = 0; i < 64*1024; i++){
-       memoryViewer->populateTable(i,memory->memRead(i));
-    }
     setCentralWidget(screen);
     setWindowIcon(QIcon(":/images/pom1.png"));
 }
@@ -63,8 +50,13 @@ MainWindow::~MainWindow()
 void MainWindow::createPom1()
 {
     memory = new Memory();
-    cpu = new M6502();
+    cpu = new M6502(memory);
     screen = new Screen();
+
+    for (int i = 0; i < 64*1024; i++){
+       memoryViewer->populateTable(i,memory->memRead(i));
+    }
+
 }
 
 void MainWindow::destroyPom1()
@@ -161,7 +153,13 @@ void MainWindow::createToolBars()
 
 void MainWindow::createDocks()
 {
+    QDockWidget *dock = new QDockWidget(tr("Memory Viewer"), this);
+    dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
+    memoryViewer = new MemoryViewer(dock);
+    dock->setWidget(memoryViewer);
+    addDockWidget(Qt::RightDockWidgetArea, dock);
+    cpuMenu->addAction(dock->toggleViewAction());
 }
 
 void MainWindow::createStatusBar()
