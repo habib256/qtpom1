@@ -171,15 +171,22 @@ void MainWindow::createStatusBar()
 
 void MainWindow::loadMemory()
 {
+    QString fichier = QFileDialog::getOpenFileName(this, tr("Open Memory File"));
 }
 void MainWindow::saveMemory()
 {
+    QString fichier = QFileDialog::getSaveFileName(this, tr("Save Memory as a File"));
 }
 void MainWindow::pasteCode()
 {
 }
 void MainWindow::quit()
 {
+    int reponse = QMessageBox::warning(this, tr("Quit"),tr("Do you really want to quit qtPom1 ?"),QMessageBox::Yes | QMessageBox::No);
+    if (reponse == QMessageBox::Yes)
+    {
+        close();
+    }
 }
 void MainWindow::reset()
 {
