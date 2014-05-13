@@ -25,10 +25,14 @@ Memory::Memory()
    initMemory();
    // TEST
    mem[5]=0xFF;
+   mem[0x8]=0xFF;
+   mem[0xA7]=0xF5;
+   mem[0xFFFF]=0xA3;
+
 }
 
 void Memory::initMemory(){
-    ramSize = 32;  // Ouaahh 32Kbytes !
+    ramSize = 64;  // Ouaahh 64Kbytes !
     for (int i=0; i < ramSize*1024; i++)
     {
     mem.push_back(0);
@@ -67,7 +71,7 @@ int Memory::loadBasic(void)
     return 0;
 }
 
-unsigned char Memory::memRead(unsigned short address)
+unsigned int Memory::memRead(unsigned int address)
 {
  return mem[address];
 }
@@ -79,17 +83,4 @@ void Memory::memWrite(unsigned short address, unsigned char value)
   mem[address] = value;
 }
 
-/*
-unsigned char *dumpMemory(unsigned short start, unsigned short end)
-{
-    unsigned char *fbrut = (unsigned char *)malloc(end - start + 1);
-
-    if (!fbrut)
-        fprintf(stderr, "stderr: Could not allocate Memory block\n");
-    else
-        memcpy(fbrut, &mem[start], end - start + 1);
-
-    return fbrut;
-}
-*/
 

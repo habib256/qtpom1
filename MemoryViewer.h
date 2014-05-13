@@ -1,20 +1,24 @@
-#ifndef DEBUGWIDGET_H
-#define DEBUGWIDGET_H
+#ifndef MEMORYVIEWER_H
+#define MEMORYVIEWER_H
 
 #include <QWidget>
 #include <QTableWidget>
 
-class DebugWidget : public QWidget
+#include "Memory.h"
+
+class MemoryViewer : public QWidget
 {
     Q_OBJECT
 public:
-    explicit DebugWidget(QWidget *parent = 0);
+    explicit MemoryViewer(QWidget *parent = 0);
+
+    void populateTable(unsigned int address,unsigned int value);
 
 private:
 
      QTableWidget *table;
 
-    void paintEvent(QPaintEvent *event);
+     void createTable(void);
 
 signals:
 
@@ -22,4 +26,4 @@ public slots:
 
 };
 
-#endif // DEBUGDOCWIDGET_H
+#endif // MEMORYVIEWER_H

@@ -38,14 +38,14 @@ public:
     int loadWozMonitor(void);
     int loadBasic(void);
 
-    unsigned char memRead(unsigned short address);
+    unsigned int memRead(unsigned int address);
     void memWrite(unsigned short address, unsigned char value);
     unsigned char *dumpMemory(unsigned short start, unsigned short end);
 
 private :
 
     // Memory itself tab
-    vector <unsigned char> mem;
+    vector <unsigned int> mem;
 
     unsigned short memReadAbsolute(unsigned short adr);
 

@@ -5,9 +5,9 @@
 #include <QMainWindow>
 
 #include "Memory.h"
+#include "MemoryViewer.h"
 #include "M6502.h"
 #include "Screen.h"
-#include "DebugWidget.h"
 
 class MainWindow : public QMainWindow
 {
@@ -24,7 +24,7 @@ private:
     M6502 *cpu;
     Memory *memory;
     Screen *screen;
-    DebugWidget *debugWidget;
+    MemoryViewer *memoryViewer;
 
     // Pom1 functions
     void createPom1(void);
@@ -59,6 +59,7 @@ private:
     void createActions(void);
     void createMenus(void);
     void createToolBars(void);
+    void createDocks(void);
     void createStatusBar(void);
 
 private slots:

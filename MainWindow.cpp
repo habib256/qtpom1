@@ -22,31 +22,35 @@
 #include <QDockWidget>
 
 #include "MainWindow.h"
-#include "DebugWidget.h"
+#include "MemoryViewer.h"
+#include "Memory.h"
 
 
 MainWindow::MainWindow()
 {
-    setFixedSize(640, 480);
+    setFixedSize(800, 480);
 
     createActions();
     createMenus();
     createToolBars();
+    createDocks();
     createStatusBar();
 
     createPom1();
 
 
 
-    QDockWidget *dock = new QDockWidget(tr("6502 Debug"), this);
-        dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
+    QDockWidget *dock = new QDockWidget(tr("Memory Viewer"), this);
+    dock->setAllowedAreas(Qt::LeftDockWidgetArea | Qt::RightDockWidgetArea);
 
-    debugWidget = new DebugWidget(dock);
-    dock->setWidget(debugWidget);
-        addDockWidget(Qt::RightDockWidgetArea, dock);
-        cpuMenu->addAction(dock->toggleViewAction());
+    memoryViewer = new MemoryViewer(dock);
+    dock->setWidget(memoryViewer);
+    addDockWidget(Qt::RightDockWidgetArea, dock);
+    cpuMenu->addAction(dock->toggleViewAction());
 
-
+    for (int i = 0; i < 64*1024; i++){
+       memoryViewer->populateTable(i,memory->memRead(i));
+    }
     setCentralWidget(screen);
     setWindowIcon(QIcon(":/images/pom1.png"));
 }
@@ -153,6 +157,11 @@ void MainWindow::createToolBars()
     configurationToolBar->addAction(configMemoryAction);
     helpToolBar = addToolBar(tr("&Help"));
     helpToolBar->addAction(aboutAction);
+}
+
+void MainWindow::createDocks()
+{
+
 }
 
 void MainWindow::createStatusBar()
