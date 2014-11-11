@@ -19,10 +19,16 @@
 
 #include <iostream>
 
+#include <QtGui>
 #include <QApplication>
 #include <QWidget>
 #include <QLabel>
 #include <QDockWidget>
+#include <QAction>
+#include <QMenuBar>
+#include <QToolBar>
+#include <QFileDialog>
+#include <QMessageBox>
 
 #include "MainWindow.h"
 #include "MemoryViewer.h"

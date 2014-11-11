@@ -16,7 +16,7 @@ MemoryViewer::MemoryViewer(QWidget *parent) :
     layout->addWidget(table);
     setLayout(layout);
 }
-void MemoryViewer::populateTable(unsigned int address,unsigned int value)
+void MemoryViewer::populateTable(quint16 address,quint8 value)
 {
     QTableWidgetItem *item = new QTableWidgetItem;
     item->setText(QString("%1").arg(value, 0, 16).toUpper());

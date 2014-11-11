@@ -44,7 +44,7 @@ public:
     void setNMI(void);
     int saveState(void);
     void loadState(int *state);
-    unsigned short memReadAbsolute(unsigned short adr);
+    quint8 memReadAbsolute(quint16 adr);
 
 
 private :
@@ -52,11 +52,11 @@ private :
     Memory *memory;
 
     //int runM6502(void *data);
-    unsigned char accumulator, xRegister, yRegister, statusRegister, stackPointer;
+    quint8 accumulator, xRegister, yRegister, statusRegister, stackPointer;
     int IRQ, NMI;
-    unsigned short programCounter;
-    unsigned char btmp;
-    unsigned short op, opH, opL, ptr, ptrH, ptrL, tmp;
+    quint16 programCounter;
+    quint8 btmp;
+    quint8 op, opH, opL, ptr, ptrH, ptrL, tmp;
     long lastTime;
     int cycles, cyclesBeforeSynchro, _synchroMillis;
     int running;
@@ -88,9 +88,9 @@ private :
     void STA(void);
     void STX(void);
     void STY(void);
-    void setFlagCarry(unsigned short val);
+    void setFlagCarry(quint8 val);
     void ADC(void);
-    void setFlagBorrow(unsigned short val);
+    void setFlagBorrow(quint8 val);
     void SBC(void);
     void CMP(void);
     void CPX(void);

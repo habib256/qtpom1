@@ -32,12 +32,13 @@ Memory::Memory()
 
 void Memory::initMemory(){
     ramSize = 64;  // Ouaahh 64Kbytes !
+    writeInRom = true;
     for (int i=0; i < ramSize*1024; i++)
     {
         mem.push_back(0);
     }
     loadBasic();
-    //loadKrusader();
+    loadKrusader();
     loadWozMonitor();
     setWriteInRom(0);
 }
@@ -67,11 +68,12 @@ int Memory::loadBasic(void)
         cout << "ERROR : Cannot Read basic File." << endl;
         return 1;
     }
-    QByteArray fileContent = file.readAll();
-    cout <<"Basic Loaded to 0xE000 : " << fileContent.size() << " Bytes" << endl;
+    QByteArray fileContent = file.readAll();   
     for (int i = 0; i < fileContent.size(); ++i) {
-        mem[i+0xE000]=(unsigned int) fileContent[i];
+        mem[i+0xE000]=(quint8) fileContent[i];
     }
+    cout <<"Basic Loaded to 0xE000 : " << fileContent.size() << " Bytes" << endl;
+    return 0;
 }
 
 
@@ -84,10 +86,11 @@ int Memory::loadKrusader(void)
         return 1;
     }
     QByteArray fileContent = file.readAll();
-    cout <<"Krusader-1.3 Loaded to 0xF000 : " << fileContent.size() << " Bytes" << endl;
     for (int i = 0; i < fileContent.size(); ++i) {
-        mem[i+0xF000]=(unsigned int) fileContent[i];
+        mem[i+0xA000]=(quint8) fileContent[i];
     }
+    cout <<"Krusader-1.3 Loaded to 0xA000 : " << fileContent.size() << " Bytes" << endl;
+    return 0;
 }
 
 int Memory::loadWozMonitor(void)
@@ -98,20 +101,20 @@ int Memory::loadWozMonitor(void)
         return 1;
     }
     QByteArray fileContent = file.readAll();
-    cout <<"WozMonitor Loaded to 0xFF00 : " << fileContent.size() << " Bytes" << endl;
     for (int i = 0; i < fileContent.size(); ++i) {
-        mem[i+0xFF00]=(unsigned int) fileContent[i];
+        mem[i+0xFF00]=(quint8) fileContent[i];
     }
+    cout <<"WozMonitor Loaded to 0xFF00 : " << fileContent.size() << " Bytes" << endl;
+    return 0;
 }
 
 
-
-unsigned int Memory::memRead(unsigned int address)
+quint8 Memory::memRead(quint16 address)
 {
     return mem[address];
 }
 
-void Memory::memWrite(unsigned short address, unsigned char value)
+void Memory::memWrite(quint16 address, quint8 value)
 {
     if (address >= 0xFF00 && !writeInRom)
         return;

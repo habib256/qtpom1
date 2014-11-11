@@ -12,7 +12,7 @@ class MemoryViewer : public QWidget
 public:
     explicit MemoryViewer(QWidget *parent = 0);
 
-    void populateTable(unsigned int address,unsigned int value);
+    void populateTable(quint16 address,quint8 value);
 
 private:
 

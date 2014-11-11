@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QtWidgets>
+//#include <QtWidgets>
 #include <QMainWindow>
 
 #include "Memory.h"

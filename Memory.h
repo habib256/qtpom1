@@ -20,6 +20,7 @@
 #define MEMORY_H
 
 #include <vector>
+#include <QDataStream>
 using namespace std;
 
 class Memory
@@ -35,20 +36,20 @@ public:
     bool getWriteInRom(void);
 
     // Load Memory from file
-        int loadBasic(void);
-        int loadKrusader(void);
+    int loadBasic(void);
+    int loadKrusader(void);
     int loadWozMonitor(void);
 
 
-    unsigned int memRead(unsigned int address);
-    //unsigned short memReadAbsolute(unsigned short adr);
-    void memWrite(unsigned short address, unsigned char value);
-    unsigned char *dumpMemory(unsigned short start, unsigned short end);
+    quint8 memRead(quint16 address);
+    //quint8 memReadAbsolute(quint16 adr);
+    void memWrite(quint16 address, quint8 value);
+    unsigned char *dumpMemory(quint16 start, quint16 end);
 
 private :
 
     // Memory itself tab
-    vector <unsigned int> mem;
+    vector <quint8> mem;
 
 
 

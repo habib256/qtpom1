@@ -34,7 +34,7 @@ M6502::M6502(Memory * mem)
    memory = mem;
 }
 
-unsigned short M6502::memReadAbsolute(unsigned short adr)
+quint8 M6502::memReadAbsolute(quint16 adr)
 {
   return (memory->memRead(adr) | memory->memRead((unsigned short)(adr + 1)) << 8);
 }
@@ -214,12 +214,12 @@ void M6502::WIndZeroY(void)
 {
 ptr = memory->memRead(programCounter++);
 opL = memory->memRead(ptr) + yRegister;
-opH = memory->memRead((unsigned short)(ptr + 1 & 0xFF)) << 8;
+opH = memory->memRead((quint8)(ptr + 1 & 0xFF)) << 8;
     cycles += 4;
     op = opH + opL;
 }
 
-void M6502::setStatusRegisterNZ(unsigned char val)
+void M6502::setStatusRegisterNZ(quint8 val)
 {
     if (val & 0x80)
         statusRegister |= N;
@@ -271,7 +271,7 @@ memory->memWrite(op, yRegister);
     cycles++;
 }
 
-void M6502::setFlagCarry(unsigned short val)
+void M6502::setFlagCarry(quint8 val)
 {
     if (val & 0x100)
         statusRegister |= C;
@@ -281,7 +281,7 @@ void M6502::setFlagCarry(unsigned short val)
 
 void M6502::ADC(void)
 {
- unsigned short Op1 = accumulator, Op2 = memory->memRead(op);
+ quint8 Op1 = accumulator, Op2 = memory->memRead(op);
     cycles++;
 
     if (statusRegister & D)
@@ -329,7 +329,7 @@ void M6502::ADC(void)
     }
 }
 
-void M6502::setFlagBorrow(unsigned short val)
+void M6502::setFlagBorrow(quint8 val)
 {
     if (!(val & 0x100))
         statusRegister |= C;
@@ -339,7 +339,7 @@ void M6502::setFlagBorrow(unsigned short val)
 
 void M6502::SBC(void)
 {
-unsigned short Op1 = accumulator, Op2 = memory->memRead(op);
+quint8 Op1 = accumulator, Op2 = memory->memRead(op);
     cycles++;
 
     if (statusRegister & D)
@@ -350,7 +350,7 @@ unsigned short Op1 = accumulator, Op2 = memory->memRead(op);
         accumulator = (accumulator & 0x0F) | (!(tmp & 0x100) ? tmp : tmp - 0x60);
      tmp = Op1 - Op2 - (statusRegister & C ? 0 : 1);
         setFlagBorrow(tmp);
-        setStatusRegisterNZ((unsigned char)tmp);
+        setStatusRegisterNZ((quint8)tmp);
     }
     else
     {
@@ -372,7 +372,7 @@ void M6502::CMP(void)
  tmp = accumulator - memory->memRead(op);
     cycles++;
     setFlagBorrow(tmp);
-    setStatusRegisterNZ((unsigned char)tmp);
+    setStatusRegisterNZ((quint8)tmp);
 }
 
 void M6502::CPX(void)
@@ -380,7 +380,7 @@ void M6502::CPX(void)
   tmp = xRegister - memory->memRead(op);
     cycles++;
     setFlagBorrow(tmp);
-    setStatusRegisterNZ((unsigned char)tmp);
+    setStatusRegisterNZ((quint8)tmp);
 }
 
 void M6502::CPY(void)
@@ -388,7 +388,7 @@ void M6502::CPY(void)
     tmp = yRegister - memory->memRead(op);
     cycles++;
     setFlagBorrow(tmp);
-    setStatusRegisterNZ((unsigned char)tmp);
+    setStatusRegisterNZ((quint8)tmp);
 }
 
 void M6502::AND(void)
@@ -463,7 +463,7 @@ void M6502::LSR_A(void)
 
 void M6502::ROL(void)
 {
-    int newCarry;
+    quint8 newCarry;
 
 btmp = memory->memRead(op);
     newCarry = btmp & 0x80;
@@ -584,14 +584,14 @@ btmp = memory->memRead(op);
 
 void M6502::PHA(void)
 {
-memory->memWrite((unsigned short)(0x100 + stackPointer), accumulator);
+memory->memWrite((quint16)(0x100 + stackPointer), accumulator);
     stackPointer--;
     cycles++;
 }
 
 void M6502::PHP(void)
 {
- memory->memWrite((unsigned short)(0x100 + stackPointer), statusRegister);
+ memory->memWrite((quint16)(0x100 + stackPointer), statusRegister);
     stackPointer--;
     cycles++;
 }
@@ -599,7 +599,7 @@ void M6502::PHP(void)
 void M6502::PLA(void)
 {
     stackPointer++;
-accumulator = memory->memRead((unsigned short)(stackPointer + 0x100));
+accumulator = memory->memRead((quint16)(stackPointer + 0x100));
     setStatusRegisterNZ(accumulator);
     cycles += 2;
 }
@@ -607,7 +607,7 @@ accumulator = memory->memRead((unsigned short)(stackPointer + 0x100));
 void M6502::PLP(void)
 {
     stackPointer++;
-  statusRegister = memory->memRead((unsigned short)(stackPointer + 0x100));
+  statusRegister = memory->memRead((quint16)(stackPointer + 0x100));
     cycles += 2;
 }
 
